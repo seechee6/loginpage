@@ -1,6 +1,6 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -35,6 +35,20 @@ class _MyHomePageState extends State<MyHomePage> {
         content: Text("Wrong username or password"),
       );
       return showDialog(context: context, builder: (context) => alert);
+    }
+  }
+
+  signInWithGoogle() async {
+    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    print(userCredential.user?.displayName);
+    if (userCredential.user != null) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => MyHomePage(title: 'My Login Page')));
     }
   }
 
@@ -81,7 +95,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration:
                     const InputDecoration(prefixIcon: Icon(Icons.password))),
             const SizedBox(height: 12),
-            ElevatedButton(onPressed: login, child: const Text('Login')),
+            ElevatedButton(
+              onPressed: () {
+                signInWithGoogle();
+              },
+              child: null,
+            )
           ]),
         ),
       ]),

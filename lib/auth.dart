@@ -18,7 +18,7 @@ class _AuthenticationState extends State<Authentication> {
       body: StreamBuilder<User?>(stream:FirebaseAuth.instance.authStateChanges(),
       builder: ((context,snapshot){
         if(snapshot.hasData){
-          return const MyWidget();
+          return MyWidget(title: '',);
         } else{
           return const MyHomePage(
           title:'My Login Page'
